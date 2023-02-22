@@ -3,7 +3,6 @@ FROM jenkins/jenkins:$JENKINS_IMAGE_VERSION
 
 LABEL maintainer="Hossein Yousefi <yousefi.hosein.o@gmail.com>"
 
-ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
 ENV CASC_JENKINS_CONFIG /var/jenkins_home/casc.yaml
 
 USER root

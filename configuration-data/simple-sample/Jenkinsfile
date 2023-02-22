@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+    stages {
+	stage('Integrity') {
+                steps {
+                        script {
+				try {
+					sh(script: "docker pss", returnStatus: true)
+				}
+				catch (e) {
+					echo "check docker problem."
+					echo e.getMessage()
+				}
+			}
+		}
+			
+	}
+	stage('Build') {
+		steps {
+			script {
+			echo 'Building docker image related to Simple-sample project...'
+
+			sh 'docker run --rm --add-host harbor.internal:HOST_IP_ADDR -v config-volume:/kaniko/.docker/ \
+				-v jenkins-data:/workspace gcr.io/kaniko-project/executor:latest \
+				--dockerfile /workspace/workspace/simple-sample/Dockerfile \
+				--destination harbor.internal/library/simple-sample --skip-tls-verify'
+			}
+            }
+        }
+
+	stage('Deploy') {
+		steps {
+			script {
+				try {
+					sh 'docker rm -f simple-sample'
+				}
+				catch (e) {
+					echo "Ready to deploy."
+				}
+				sh 'docker pull harbor.internal/library/simple-sample'
+				sh 'docker run -d --name simple-sample -p 8000:80 harbor.internal/library/simple-sample'
+			}
+		
+		}
+
+	}
+    }
+}

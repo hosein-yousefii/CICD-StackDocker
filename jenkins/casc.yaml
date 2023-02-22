@@ -22,3 +22,34 @@ unclassified:
   location:
     url: http://0.0.0.0:8080/
       
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: gitea
+              username: gitadmin
+              password: qazwsx
+              description: Gitea credentials
+
+jobs:
+  - script: |
+      pipelineJob('simple-sample') {
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                      url('http://cicd-stack-gitea:3000/gitadmin/simple-sample.git')
+                      credentials('gitea')
+                }  
+                branch('*/main')
+                }
+              }
+              lightweight()
+            }
+          }
+        }
+      
+              

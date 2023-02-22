@@ -2,17 +2,18 @@
 # Maintainer Hossein yousefi yousefi.hosein.o@gmail.com
 # Gitea as a repository manager
 
-GITEA_IP_ADDR=${SERVER_IP_ADDR:-127.0.0.1}
+SYSTEM_IP=($(hostname -I))
+GITEA_IP_ADDR=${SERVER_IP_ADDR:-${SYSTEM_IP[0]}}
 
-if [[ ! grep -ari SERVER_IP_ADDR . ]]
+if [[ -e gitea-data ]]
 then
 	echo "[Git-service :: ERROR]: Gitea is already changed, restore gitea-data/gitea/conf/app.ini"	
 	exit 1
 fi
 
+cp -r gitea-data-raw gitea-data
 sed -i "s/SERVER_IP_ADDR/${GITEA_IP_ADDR}/g" gitea-data/gitea/conf/app.ini
 
-echo
 echo "[Git-service :: INFO]: Installing Gitea..."
 
 docker-compose up -d &>installer.log

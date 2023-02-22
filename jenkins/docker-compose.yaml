@@ -1,0 +1,27 @@
+version: !!str 3
+
+services:
+  jenkins:
+    container_name: cicd-stack-jenkins
+    image: jenkins-custom
+    restart: unless-stopped
+    environment:
+      - "TZ=America/New_York"
+      - "JAVA_OPTS=-Duser.timezone=America/New_York -Djenkins.install.runSetupWizard=false"
+      - "DOCKER_HOST=tcp://127.0.0.1:2376"
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    networks:
+      - cicd-stack
+    volumes:
+      - "jenkins-data:/var/jenkins_home"        
+
+networks:
+  cicd-stack:
+    name: cicd-stack          
+    external: false
+
+volumes:
+  jenkins-data:
+    name: jenkins-data
