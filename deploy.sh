@@ -126,7 +126,8 @@ case $1 in
 
 		network_conf
 		create_repo
-		echo "127.0.0.1 harbor.internal" >> /etc/hosts
+		                
+		if [[ ! $(grep -ari harbor.internal /etc/hosts) ]];then echo "127.0.0.1 harbor.internal" >> /etc/hosts;fi
 
 		echo
 		echo "[CICD-stack :: INFO]: Jenkins url: ${HOST_IP[0]}:8080"
